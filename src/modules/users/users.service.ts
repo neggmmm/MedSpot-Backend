@@ -43,6 +43,24 @@ export class UsersService {
             .where('user.email= :email', { email })
             .getOne();
     }
+
+    async searchUsers(query: string, page = 1, limit = 10): Promise<PaginationResponseDto<User>> {
+        const qb = this.userRepository.createQueryBuilder('user')
+            .where('user.email ILIKE :query', { query: `%${query}%` })
+            .orWhere('user.name ILIKE :query', { query: `%${query}%` })
+            .skip((page - 1) * limit)
+            .take(limit);
+
+        const [users, total] = await qb.getManyAndCount();
+
+        return {
+            data: users,
+            total,
+            page,
+            lastPage: Math.ceil(total / limit),
+        };
+    }
+
     async createUser(dto: CreateUserDto): Promise<User> {
         const existingUser = await this.findByEmail(dto.email);
         if (existingUser) {
