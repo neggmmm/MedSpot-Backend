@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './users.entity';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { hashpassword } from 'src/common/hashPassword';
@@ -44,12 +44,28 @@ export class UsersService {
             .getOne();
     }
     async createUser(dto: CreateUserDto): Promise<User> {
-        const hashedPaswword = await hashpassword(dto.password)
+        const existingUser = await this.findByEmail(dto.email);
+        if (existingUser) {
+            throw new ConflictException('Email already exists');
+        }
+
+        const hashedPassword = await hashpassword(dto.password);
         const user = this.userRepository.create({
             ...dto,
-            password: hashedPaswword
+            password: hashedPassword,
         });
-        return this.userRepository.save(user)
+
+        try {
+            return await this.userRepository.save(user);
+        } catch (error) {
+            if (
+                error instanceof QueryFailedError &&
+                (error as any).code === '23505'
+            ) {
+                throw new ConflictException('Email already exists');
+            }
+            throw error;
+        }
     }
     async updateUser(id: number, dto: UpdateUserDto): Promise<User | null> {
         const user = await this.findOne(id);

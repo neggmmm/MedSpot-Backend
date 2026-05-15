@@ -4,13 +4,17 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './users.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PaginationResponseDto } from 'src/common/dto/pagination-response-dto';
+import { Roles } from 'src/common/decorators/role.decorator';
+import { Role } from 'src/common/enum/role.enum';
 
+@Roles(Role.ADMIN)
 @Controller('users')
 export class UsersController {
     constructor(
         private readonly usersService: UsersService
     ) { }
     @Get()
+   
     findAll(
         @Query('page', ParseIntPipe) page = 1,
         @Query('limit', ParseIntPipe) limit = 10
