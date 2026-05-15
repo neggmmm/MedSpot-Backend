@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PRODUCT_REPOSITORY } from './domain/repositories/product.repository';
 import { FILE_STORAGE } from './application/ports/file-storage.port';
 import { ProductOrmEntity } from './infrastructure/persistence/typeorm/product.orm-entity';
+import { CategoryOrmEntity } from './infrastructure/persistence/typeorm/category.orm-entity';
 import { TypeormProductRepository } from './infrastructure/persistence/typeorm/typeorm-product.repository';
 import { S3FileStorageService } from './infrastructure/storage/s3-file-storage.service';
 import { ListProductsUseCase } from './application/use-cases/list-products.use-case';
@@ -14,7 +15,7 @@ import { DeleteProductUseCase } from './application/use-cases/delete-product.use
 import { ProductsController } from './presentation/http/products.controller';
 
 @Module({
-  imports: [ConfigModule, TypeOrmModule.forFeature([ProductOrmEntity])],
+  imports: [ConfigModule, TypeOrmModule.forFeature([ProductOrmEntity, CategoryOrmEntity])],
   controllers: [ProductsController],
   providers: [
     ListProductsUseCase,

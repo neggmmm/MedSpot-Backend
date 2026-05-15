@@ -12,6 +12,7 @@ export interface CreateProductCommand {
   price: number;
   userId: number;
   file?: Express.Multer.File;
+  categoryId?: number;
 }
 
 @Injectable()
@@ -34,6 +35,7 @@ export class CreateProductUseCase {
           // The authenticated user's id becomes the product owner.
           userId: command.userId,
           image,
+          categoryId: command.categoryId,
         });
       });
   }

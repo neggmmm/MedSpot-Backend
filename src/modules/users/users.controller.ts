@@ -22,6 +22,16 @@ export class UsersController {
         return this.usersService.findAll(page, limit);
     }
 
+    @Get('/search')
+    searchUsers(
+        @Query('q') query: string,
+        @Query('page', ParseIntPipe) page = 1,
+        @Query('limit', ParseIntPipe) limit = 10
+    ): Promise<PaginationResponseDto<User>> {
+        limit = Math.min(limit, 50);
+        return this.usersService.searchUsers(query, page, limit);
+    }
+
     @Get(':id')
     findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
         return this.usersService.findOne(id)

@@ -89,6 +89,7 @@ export class ProductsController {
       price: dto.price,
       userId: req.user.sub,
       file,
+      categoryId: dto.categoryId,
     });
   }
 

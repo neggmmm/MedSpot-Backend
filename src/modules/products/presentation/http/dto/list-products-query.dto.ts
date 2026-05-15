@@ -24,6 +24,12 @@ export class ListProductsQueryDto {
   @Min(0)
   maxPrice?: number;
 
+  @Type(() => Number)
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  categoryId?: number;
+
   @IsOptional()
   @IsString()
   sortBy = 'id';
