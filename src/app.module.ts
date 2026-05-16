@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
+import { ProviderApplicationsModule } from './modules/provider-applications/provider-applications.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config/configuration';
@@ -57,6 +58,7 @@ import { CommonModule } from './common/common.module';
     ]),
     AuthModule,
     UsersModule,
+    ProviderApplicationsModule,
     ProductsModule,
     CartModule,
     OrderModule,
