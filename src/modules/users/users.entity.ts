@@ -5,27 +5,43 @@ import { ProductOrmEntity } from "../products/infrastructure/persistence/typeorm
 @Entity('users')
 export class User {
     @PrimaryGeneratedColumn()
-    id: number;
+    id!: number;
 
     @Column()
-    name: string;
+    name!: string;
 
     @Column({ unique: true })
-    email: string;
+    email!: string;
+
+    @Column({ nullable: true })
+    phoneExtension?: string;
+    
+    @Column({ nullable: true })
+    phoneNumber?: string;
+
+    @Column({ nullable: true })
+    profilePicture?: string;
+
+    @Column({
+        type: 'enum',
+        enum: ['pending', 'approved', 'rejected'],
+        default: 'pending',
+    })
+    profilePictureStatus!: string;
 
     @Column({
         type: 'enum',
         enum: ['superAdmin','admin', 'customer', 'provider','delivery'],
         default: 'customer'
     })
-    role: string;
+    role!: string;
 
     @Column({ select: false })
-    password: string;
+    password!: string;
 
     @OneToOne(() => Cart, cart => cart.user)
-    cart: Cart;
+    cart?: Cart;
 
     @OneToMany(() => ProductOrmEntity, product => product.owner)
-    products: ProductOrmEntity[];
+    products?: ProductOrmEntity[];
 }
