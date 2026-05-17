@@ -10,6 +10,7 @@ export interface CreateAuthUserData {
   email: string;
   password: string;
   role: string;
+  phoneNumber: string;
 }
 
 export const AUTH_USER_READER = Symbol('AUTH_USER_READER');

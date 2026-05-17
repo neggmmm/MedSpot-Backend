@@ -23,6 +23,7 @@ export class RegisterUserUseCase {
             email: dto.email,
             password: dto.password,
             role: "customer",
+            phoneNumber: dto.phoneNumber,
         });
         return {
       message: "User registered successfully",
