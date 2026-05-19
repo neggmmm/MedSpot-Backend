@@ -1,19 +1,22 @@
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import { extname } from 'path';
 import { FileStorage } from '../../application/ports/file-storage.port';
+import { AppLogger } from '../../../../common/logger/logger.service';
 
 @Injectable()
 export class S3FileStorageService implements FileStorage {
-  private readonly logger = new Logger(S3FileStorageService.name);
   private readonly s3Client: S3Client;
   private readonly bucket: string;
   private readonly region: string;
   private readonly productsPrefix: string;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly logger: AppLogger,
+  ) {
     this.bucket = this.configService.getOrThrow<string>('aws.bucket');
     this.region = this.configService.getOrThrow<string>('aws.region');
     this.productsPrefix = this.configService.get<string>('aws.productsPrefix') || 'products';
@@ -47,7 +50,7 @@ export class S3FileStorageService implements FileStorage {
 
       return `https://${this.bucket}.s3.${this.region}.amazonaws.com/${objectKey}`;
     } catch (error) {
-      this.logger.error('S3 upload failed', error instanceof Error ? error.stack : undefined);
+      this.logger.error(S3FileStorageService.name, 'S3 upload failed', error);
       throw new InternalServerErrorException('Failed to upload image to S3');
     }
   }

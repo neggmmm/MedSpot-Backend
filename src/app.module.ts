@@ -15,6 +15,7 @@ import { OrderModule } from './modules/order/order.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { CommonModule } from './common/common.module';
+import { LoggerSharedModule } from './common/logger/logger.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { CommonModule } from './common/common.module';
         limit: 10
       }
     ]),
+    LoggerSharedModule,
     AuthModule,
     UsersModule,
     ProviderApplicationsModule,
