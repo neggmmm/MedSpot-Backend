@@ -13,6 +13,15 @@ export class User {
     @Column({ unique: true })
     email!: string;
 
+    @Column({ default: false })
+    emailVerified!: boolean;
+
+    @Column({ nullable: true, select: false })
+    emailVerificationCode?: string;
+
+    @Column({ nullable: true, type: 'timestamp with time zone' })
+    emailVerificationCodeExpiresAt?: Date;
+
     @Column({ nullable: true })
     phoneExtension?: string;
     

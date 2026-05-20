@@ -1,4 +1,4 @@
-import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './users.entity';
 import { QueryFailedError, Repository } from 'typeorm';
@@ -88,6 +88,35 @@ export class UsersService {
             throw error;
         }
     }
+
+    async updateEmailVerificationCode(userId: number, code: string, expiresAt: Date): Promise<User> {
+        const user = await this.findOne(userId);
+        user.emailVerificationCode = code;
+        user.emailVerificationCodeExpiresAt = expiresAt;
+        return this.userRepository.save(user);
+    }
+
+    async verifyEmailCode(email: string, code: string): Promise<User> {
+        const user = await this.userRepository.createQueryBuilder('user')
+            .addSelect('user.emailVerificationCode')
+            .addSelect('user.emailVerificationCodeExpiresAt')
+            .where('user.email = :email', { email })
+            .getOne();
+
+        if (!user || !user.emailVerificationCode || user.emailVerificationCode !== code) {
+            throw new BadRequestException('Invalid verification code');
+        }
+
+        if (!user.emailVerificationCodeExpiresAt || user.emailVerificationCodeExpiresAt < new Date()) {
+            throw new BadRequestException('Verification code has expired');
+        }
+
+        user.emailVerified = true;
+        user.emailVerificationCode = undefined;
+        user.emailVerificationCodeExpiresAt = undefined;
+        return this.userRepository.save(user);
+    }
+
     async updateUser(
         id: number,
         dto: UpdateUserDto,
