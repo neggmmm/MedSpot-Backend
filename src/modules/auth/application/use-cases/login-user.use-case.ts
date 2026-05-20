@@ -36,6 +36,11 @@ export class LoginUserUseCase {
             throw new NotAcceptableException("Email or password is wrong");
         }
 
+        if (!user.emailVerified) {
+            this.logger.warn(context, 'Email not verified', { userId: user.id, email: dto.email });
+            throw new NotAcceptableException('Email not verified');
+        }
+
         const isPasswordValid = await this.passwordHasher.compare(dto.password, user.password);
         
         if (!isPasswordValid) {
