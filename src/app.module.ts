@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { ProviderApplicationsModule } from './modules/provider-applications/provider-applications.module';
@@ -69,9 +67,7 @@ import { LoggerSharedModule } from './common/logger/logger.module';
     OrderModule,
     PaymentsModule,
   ],
-  controllers: [AppController],
   providers: [
-    AppService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
