@@ -15,6 +15,7 @@ import { PaymentsModule } from './modules/payments/payments.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { CommonModule } from './common/common.module';
 import { LoggerSharedModule } from './common/logger/logger.module';
+import { AuditModule } from './modules/audit/audit.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { LoggerSharedModule } from './common/logger/logger.module';
     CartModule,
     OrderModule,
     PaymentsModule,
+    AuditModule,
   ],
   providers: [
     {
