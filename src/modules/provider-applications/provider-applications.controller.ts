@@ -21,7 +21,6 @@ export class ProviderApplicationsController {
   constructor(private readonly providerApplicationsService: ProviderApplicationsService) {}
 
   @Post()
-  @Roles(Role.CUSTOMER)
   createApplication(
     @Req() req: AuthenticatedRequest,
     @Body() dto: CreateProviderApplicationDto,

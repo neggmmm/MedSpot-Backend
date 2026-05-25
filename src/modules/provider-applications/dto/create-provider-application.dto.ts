@@ -3,11 +3,11 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 export class CreateProviderApplicationDto {
   @IsString()
   @IsNotEmpty()
-  businessName: string;
+  businessName!: string;
 
   @IsString()
   @IsNotEmpty()
-  phoneNumber: string;
+  phoneNumber!: string;
 
   @IsOptional()
   @IsString()
