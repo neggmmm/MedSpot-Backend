@@ -1,4 +1,4 @@
-import { Controller, Get, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, DefaultValuePipe, Get, ParseIntPipe, Query } from '@nestjs/common';
 import { AuditService } from './audit.service';
 import { Roles } from 'src/common/decorators/role.decorator';
 import { Role } from 'src/common/enum/role.enum';
@@ -13,8 +13,8 @@ export class AuditController {
 
     @Get()
     getAllAudit(
-        @Query('page', new ParseIntPipe()) page:number,
-        @Query('limit', new ParseIntPipe()) limit:number){
+        @Query('page',  new DefaultValuePipe(1),new ParseIntPipe()) page:number,
+        @Query('limit',  new DefaultValuePipe(1),new ParseIntPipe()) limit:number){
         return this.auditService.getAllAudit(page,limit)
     }
 }
