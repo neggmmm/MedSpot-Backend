@@ -4,9 +4,10 @@ import { ProviderApplicationsController } from './provider-applications.controll
 import { ProviderApplicationsService } from './provider-applications.service';
 import { ProviderApplication } from './infrastructure/typeorm/provider-application.orm-entity';
 import { User } from '../users/users.entity';
+import { AuditModule } from '../audit/audit.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ProviderApplication, User])],
+  imports: [TypeOrmModule.forFeature([ProviderApplication, User]), AuditModule],
   controllers: [ProviderApplicationsController],
   providers: [ProviderApplicationsService],
 })

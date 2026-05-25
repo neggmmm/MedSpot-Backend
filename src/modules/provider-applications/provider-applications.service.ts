@@ -8,6 +8,7 @@ import { ListProviderApplicationsQueryDto } from './dto/list-provider-applicatio
 import { ReviewProviderApplicationDto } from './dto/review-provider-application.dto';
 import { ProviderApplicationStatus } from './enums/provider-application-status.enum';
 import { Role } from '../../common/enum/role.enum';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class ProviderApplicationsService {
@@ -16,7 +17,8 @@ export class ProviderApplicationsService {
     private readonly applicationRepository: Repository<ProviderApplication>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
+    private readonly auditService: AuditService
+  ) { }
 
   async createApplication(userId: number, dto: CreateProviderApplicationDto): Promise<ProviderApplication> {
     const user = await this.userRepository.findOneBy({ id: userId });
@@ -39,7 +41,6 @@ export class ProviderApplicationsService {
     if (existingPending) {
       throw new ConflictException('A pending application already exists for this user');
     }
-
     const application = this.applicationRepository.create({
       user,
       userId,
@@ -49,7 +50,19 @@ export class ProviderApplicationsService {
       status: ProviderApplicationStatus.PENDING,
     });
 
-    return this.applicationRepository.save(application);
+    const savedApplication =
+      await this.applicationRepository.save(application);
+
+    await this.auditService.create({
+      action: "Application created",
+
+      performedBy: userId,
+
+      entity: "ProviderApplication",
+
+      entityId: savedApplication.id,
+    });
+    return savedApplication;
   }
 
   async getMyApplications(userId: number): Promise<ProviderApplication[]> {
@@ -84,7 +97,7 @@ export class ProviderApplicationsService {
   }
 
   async reviewApplication(
-    applicationId: string,
+    applicationId: number,
     dto: ReviewProviderApplicationDto,
     adminId: number,
   ): Promise<ProviderApplication> {

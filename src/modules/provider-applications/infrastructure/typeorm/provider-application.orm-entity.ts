@@ -4,27 +4,27 @@ import { User } from '../../../users/users.entity';
 
 @Entity('provider_applications')
 export class ProviderApplication {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id!: number;
 
   @Column()
-  userId: number;
+  userId!: number;
 
   @ManyToOne(() => User, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user!: User;
 
   @Column()
-  businessName: string;
+  businessName!: string;
 
   @Column()
-  phoneNumber: string;
+  phoneNumber!: string;
 
   @Column({ type: 'text', nullable: true })
   notes?: string;
 
   @Column({ type: 'enum', enum: ProviderApplicationStatus, default: ProviderApplicationStatus.PENDING })
-  status: ProviderApplicationStatus;
+  status!: ProviderApplicationStatus;
 
   @Column({ type: 'text', nullable: true })
   rejectionReason?: string | null;
@@ -40,8 +40,8 @@ export class ProviderApplication {
   reviewedBy?: User;
 
   @CreateDateColumn({ type: 'timestamptz' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ type: 'timestamptz' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }

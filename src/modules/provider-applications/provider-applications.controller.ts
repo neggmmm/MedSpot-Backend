@@ -49,7 +49,7 @@ export class ProviderApplicationsController {
   @Patch(':id/review')
   @Roles(Role.ADMIN, Role.SUPERADMIN)
   reviewApplication(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() dto: ReviewProviderApplicationDto,
     @Req() req: AuthenticatedRequest,
   ) {
