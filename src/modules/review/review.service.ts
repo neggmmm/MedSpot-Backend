@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from './review.entity';
 import { Repository } from 'typeorm';
@@ -28,26 +28,32 @@ export class ReviewService {
         // Implement logic to retrieve reviews for a specific product
         return this.reviewRepository.find({ where: { productId } });
     }
+    async getOneReview(reviewId: number) {
+        return this.reviewRepository.findOne({ where: { id: reviewId } });
+    }
 
+    async getOneProductReview(reviewId: number, productId: number) {
+        return this.reviewRepository.findOne({ where: { id: reviewId, productId } });
+    }
+
+    async getOneMyReview(reviewId: number, userId: number) {
+        return this.reviewRepository.findOne({ where: { id: reviewId, userId } });
+    }
     async getMyReviews(userId: number) {
         // Implement logic to retrieve reviews written by the currently authenticated user
         return this.reviewRepository.find({ where: { userId } });
     }
 
-    async updateReview(reviewId: number, reviewData: UpdateReviewDto) {
-        // Implement logic to update a review with the given review ID using the provided review data
-        const review = await this.reviewRepository.findOne({ where: { id: reviewId } });
-        if (!review) {
-            throw new ConflictException('Review not found');
-        }
-        Object.assign(review, reviewData);
-        return this.reviewRepository.save(review);
+    async deleteReview(reviewId: number, userId: number) {
+        const result = await this.reviewRepository.delete({ id: reviewId, userId });
+        if (result.affected === 0) throw new NotFoundException('Cannot delete review');
+        return { message: 'Review deleted successfully' };
     }
 
-    async deleteReview(reviewId: number) {
-        // Implement logic to delete the review with the given review ID
-        const result = await this.reviewRepository.delete({ id: reviewId });
-        if (result.affected === 0) throw new ConflictException('Review not found');
-        return { message: 'Review deleted successfully' };
+    async updateReview(reviewId: number, reviewData: UpdateReviewDto, userId: number) {
+        const review = await this.reviewRepository.findOne({ where: { id: reviewId, userId } });
+        if (!review) throw new NotFoundException('Cannot update review');
+        Object.assign(review, reviewData);
+        return this.reviewRepository.save(review);
     }
 }
