@@ -2,6 +2,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGenerat
 import { CartItem } from '../../../../cart/infrastructure/typeorm/cartItem.entity';
 import { User } from '../../../../users/users.entity';
 import { CategoryOrmEntity } from '../../../../categories/infrastructure/persistence/typeorm/category.orm-entity';
+import { Review } from 'src/modules/review/review.entity';
 
 @Entity('products')
 export class ProductOrmEntity {
@@ -39,4 +40,7 @@ export class ProductOrmEntity {
 
   @OneToMany(() => CartItem, (cartItem: CartItem) => cartItem.product)
   cartItems!: CartItem[];
+
+  @OneToMany(()=> Review, review=>review.product)
+  reviews?: Review[];
 }

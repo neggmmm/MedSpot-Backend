@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typ
 import { Cart } from "../cart/infrastructure/typeorm/cart.entity";
 import { ProductOrmEntity } from "../products/infrastructure/persistence/typeorm/product.orm-entity";
 import { Address } from "../address/address.entity";
+import { Review } from "../review/review.entity";
 
 @Entity('users')
 export class User {
@@ -48,6 +49,9 @@ export class User {
 
     @OneToMany(() => Address, address => address.user)
     addresses?: Address[];
+
+    @OneToMany(()=>Review, review=>review.user)
+    reviews?: Review[];
 
     @Column({ select: false })
     password!: string;
