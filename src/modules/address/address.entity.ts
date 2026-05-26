@@ -24,5 +24,5 @@ export class Address{
     user!: User;
 
     @Column()
-    user_id!: number;
+    userId!: number;
 }
