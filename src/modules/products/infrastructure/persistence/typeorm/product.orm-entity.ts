@@ -11,7 +11,7 @@ export class ProductOrmEntity {
 
   @Index()
   @Column({ nullable: true })
-  userId?: number;
+  userId!: number;
 
   @Index()
   @Column({ nullable: true })
@@ -34,6 +34,12 @@ export class ProductOrmEntity {
   @Index()
   @Column('decimal', { precision: 10, scale: 2 })
   price!: number;
+
+  @Column({ type: 'int', default: 0 })
+  stock!: number;
+
+  @Column({ type: 'int', default: 10 })
+  lowStockThreshold!: number;
 
   @Column({ nullable: true })
   image?: string;

@@ -32,7 +32,15 @@ export class TypeormProductRepository implements ProductRepository {
     } = query;
 
     const qb = this.ormRepository.createQueryBuilder('product')
-      .select(['product.id', 'product.name', 'product.price', 'product.userId', 'product.image']);
+      .select([
+        'product.id',
+        'product.name',
+        'product.price',
+        'product.userId',
+        'product.image',
+        'product.stock',
+        'product.lowStockThreshold',
+      ]);
 
     new SearchSepecification(search).apply(qb)
     new PriceSpecifictaion(minPrice, maxPrice).apply(qb)
@@ -80,11 +88,29 @@ export class TypeormProductRepository implements ProductRepository {
     return this.toDomain(updatedProduct);
   }
 
+  async findLowStockByOwner(ownerId: number): Promise<Product[]> {
+    const products = await this.ormRepository
+      .createQueryBuilder('product')
+      .where('product.userId = :ownerId', { ownerId })
+      .andWhere('product.stock <= product.lowStockThreshold')
+      .getMany();
+
+    return products.map(this.toDomain);
+  }
+
   async delete(id: number): Promise<void> {
     await this.ormRepository.delete(id);
   }
 
   private toDomain(product: ProductOrmEntity): Product {
-    return new Product(product.id, product.name, Number(product.price), product.userId, product.image);
+    return new Product(
+      product.id,
+      product.name,
+      Number(product.price),
+      product.userId,
+      product.image,
+      product.stock,
+      product.lowStockThreshold,
+    );
   }
 }

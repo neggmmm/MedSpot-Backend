@@ -5,6 +5,7 @@ export const PRODUCT_REPOSITORY = Symbol('PRODUCT_REPOSITORY');
 export interface ProductRepository {
   findAll(ListProductQueryData): Promise<{data: Product[]; total: number}>;
   findById(id: number): Promise<Product | null>;
+  findLowStockByOwner(ownerId: number): Promise<Product[]>;
   create(data: CreateProductRepositoryData): Promise<Product>;
   update(id: number, data: UpdateProductRepositoryData): Promise<Product>;
   transaction<T>(cb: (repo: ProductRepository) => Promise<T>): Promise<T>;
@@ -26,6 +27,8 @@ export interface CreateProductRepositoryData {
   price: number;
   userId: number;
   image?: string;
+  stock: number;
+  lowStockThreshold?: number;
   categoryId?: number;
 }
 
@@ -33,4 +36,6 @@ export interface UpdateProductRepositoryData {
   name?: string;
   price?: number;
   image?: string;
+  stock?: number;
+  lowStockThreshold?: number;
 }
