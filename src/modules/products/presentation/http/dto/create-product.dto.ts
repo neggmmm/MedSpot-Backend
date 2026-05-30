@@ -4,12 +4,24 @@ import { IsNotEmpty, IsNumber, IsString, IsOptional, IsInt, Min } from 'class-va
 export class CreateProductDto {
   @IsNotEmpty()
   @IsString()
-  name: string;
+  name!: string;
 
   @IsNotEmpty()
   @Type(() => Number)
   @IsNumber()
-  price: number;
+  price!: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  stock?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  lowStockThreshold?: number;
 
   @IsOptional()
   @Type(() => Number)
