@@ -17,6 +17,14 @@ export class AddressService {
         return this.addressRepository.find({ where: { userId }})
     }
 
+    async getAddressById(addressId: number, userId: number) {
+        const address = await this.addressRepository.findOne({ where: { id: addressId, userId } });
+        if (!address) {
+            throw new NotFoundException('Address not found');
+        }
+        return address;
+    }
+
     async createAddress(userId: number, addressData: CreateAddressDto) {
         const existingCount = await this.addressRepository.count({
             where: { userId }

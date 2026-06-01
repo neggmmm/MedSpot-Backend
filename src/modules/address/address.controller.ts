@@ -1,8 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards} from '@nestjs/common';
 import { AddressService } from './address.service';
 import type { CreateAddressDto } from './dto/createAddress.dto';
 import type { UpdateAddressDto } from './dto/updateAdress.dto';
+import { AuthGuard } from '../auth/presentation/http/guard/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('address')
 export class AddressController {
     constructor(
@@ -11,18 +13,25 @@ export class AddressController {
 
     @Get()
     getMyAddresses(
-        @Param('userId') userId: number
+        @Req() req
     ) {
         // Implement logic to retrieve the addresses of the currently authenticated user
-        return this.addressService.getMyAddresses(userId);
+        return this.addressService.getMyAddresses(req.user.sub);
+    }
+
+    @Get(':id')
+    getAddressById(
+        @Param('id') addressId: number,
+        @Req() req
+    ) {
+        return this.addressService.getAddressById(addressId,req.user.sub);
     }
     @Post()
     createAddress(
         @Body() addressData: CreateAddressDto,
-        @Param('userId') userId: number
+        @Req() req
     ) {
-        // Implement logic to create a new address for the currently authenticated user
-        return this.addressService.createAddress(userId, addressData);
+        return this.addressService.createAddress(req.user.sub, addressData);
     }
 
     @Patch(':id')
@@ -37,9 +46,8 @@ export class AddressController {
     @Delete(':id')
     deleteAddress(
         @Param('id') addressId: number,
-        @Param('userId') userId: number
+        @Req() req
     ) {
-        // Implement logic to delete the address with the given address ID
-        return this.addressService.deleteAddress(addressId, userId);
+        return this.addressService.deleteAddress(addressId, req.user.sub);
     }
 }
