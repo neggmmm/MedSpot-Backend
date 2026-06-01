@@ -114,10 +114,6 @@ export class ProviderApplicationsService {
       throw new NotFoundException('Provider application not found');
     }
 
-    if (application.status !== ProviderApplicationStatus.PENDING) {
-      throw new BadRequestException('Only pending applications can be reviewed');
-    }
-
     if (dto.status === ProviderApplicationStatus.REJECTED && !dto.rejectionReason) {
       throw new BadRequestException('Rejection reason is required when rejecting an application');
     }
