@@ -6,12 +6,12 @@ import { Role } from 'src/common/enum/role.enum';
 import { OrderService } from './order.service';
 import { OrderQueryDto } from './dto/order-query.dto';
 
+@UseGuards(AuthGuard)
 @Controller('order')
 export class OrderController {
   constructor(private readonly orderServices: OrderService) {}
 
   @Post('/create')
-  @UseGuards(AuthGuard)
   create(@Req() req, @Body() body: { paymentMethod: string }) {
     return this.orderServices.createOrder(req.user.sub, body.paymentMethod);
   }
@@ -19,7 +19,7 @@ export class OrderController {
   // Admin: Get all orders with pagination
   @Get('/admin/orders')
   @Roles(Role.ADMIN, Role.SUPERADMIN)
-  @UseGuards(AuthGuard, AuthorizationGuard)
+  @UseGuards(AuthorizationGuard)
   async getAllOrders(@Query() query: OrderQueryDto = new OrderQueryDto()) {
     // Limit max results per page to 50 for performance
     query.limit = Math.min(query.limit || 10, 50);
@@ -40,13 +40,11 @@ export class OrderController {
 
   // User: Get my orders
   @Get()
-  @UseGuards(AuthGuard)
   getMyOrders(@Req() req) {
     return this.orderServices.getMyOrders(req.user.sub);
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard)
   getOrder(@Req() req, @Param('id', ParseIntPipe) orderId: number) {
     return this.orderServices.getOrder(req.user.sub, orderId);
   }
