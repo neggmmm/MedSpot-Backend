@@ -44,6 +44,22 @@ export class OrderController {
     return this.orderServices.getMyOrders(req.user.sub);
   }
 
+  // Provider: get their completed orders and revenue
+  @Get('provider/stats')
+  @Roles(Role.PROVIDER)
+  @UseGuards(AuthorizationGuard)
+  getProviderStats(@Req() req) {
+    return this.orderServices.getProviderStats(req.user.sub);
+  }
+
+  // Admin: global stats
+  @Get('stats/global')
+  @Roles(Role.ADMIN, Role.SUPERADMIN)
+  @UseGuards(AuthorizationGuard)
+  getGlobalStats() {
+    return this.orderServices.getGlobalStats();
+  }
+
   @Get(':id')
   getOrder(@Req() req, @Param('id', ParseIntPipe) orderId: number) {
     return this.orderServices.getOrder(req.user.sub, orderId);

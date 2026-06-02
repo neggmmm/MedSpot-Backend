@@ -117,4 +117,43 @@ export class OrderService {
       })),
     };
   }
+
+  // Returns revenue and completed orders/items for a given provider (userId on product)
+  async getProviderStats(providerId: number) {
+    const raw = await this.orderItemRepository
+      .createQueryBuilder('oi')
+      .innerJoin('oi.product', 'product')
+      .innerJoin('oi.order', 'order')
+      .where('product.userId = :providerId', { providerId })
+      .andWhere('order.status = :status', { status: orderStatus.DELIVERED })
+      .select('COUNT(DISTINCT order.id)', 'completedOrders')
+      .addSelect('COALESCE(SUM(oi.quantity), 0)', 'totalItems')
+      .addSelect('COALESCE(SUM(oi.quantity * oi.price), 0)', 'revenue')
+      .getRawOne();
+
+    return {
+      providerId,
+      completedOrders: Number(raw?.completedOrders ?? 0),
+      totalItems: Number(raw?.totalItems ?? 0),
+      revenue: Number(raw?.revenue ?? 0),
+    };
+  }
+
+  // Returns global totals for completed orders and revenue across the whole project
+  async getGlobalStats() {
+    const totalCompletedOrders = await this.orderRepository.count({
+      where: { status: orderStatus.DELIVERED },
+    });
+
+    const revenueRaw = await this.orderRepository
+      .createQueryBuilder('order')
+      .select('COALESCE(SUM(order.totalPrice), 0)', 'revenue')
+      .where('order.status = :status', { status: orderStatus.DELIVERED })
+      .getRawOne();
+
+    return {
+      totalCompletedOrders: Number(totalCompletedOrders ?? 0),
+      totalRevenue: Number(revenueRaw?.revenue ?? 0),
+    };
+  }
 }
