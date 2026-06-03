@@ -3,6 +3,7 @@ import { CartItem } from '../../../../cart/infrastructure/typeorm/cartItem.entit
 import { User } from '../../../../users/users.entity';
 import { CategoryOrmEntity } from '../../../../categories/infrastructure/persistence/typeorm/category.orm-entity';
 import { Review } from 'src/modules/review/review.entity';
+import { OrderItem } from '../../../../order/entity/orderItem.entity';
 
 @Entity('products')
 export class ProductOrmEntity {
@@ -47,6 +48,9 @@ export class ProductOrmEntity {
   @OneToMany(() => CartItem, (cartItem: CartItem) => cartItem.product)
   cartItems!: CartItem[];
 
-  @OneToMany(()=> Review, review=>review.product)
+  @OneToMany(() => Review, review => review.product)
   reviews?: Review[];
+
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.product)
+  orderItems?: OrderItem[];
 }
