@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { OrderItem } from "./orderItem.entity";
 
 export enum orderStatus{
@@ -20,6 +20,7 @@ export class Order {
     @Column()
     name: string;
 
+    @Index()
     @Column()
     userId: number;
 

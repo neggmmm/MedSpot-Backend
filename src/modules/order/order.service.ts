@@ -69,32 +69,39 @@ export class OrderService {
     const { page = 1, limit = 10 } = query;
     const skip = (page - 1) * limit;
 
-    // Fetch orders with pagination and count total
-    const [orders, total] = await this.orderRepository.findAndCount({
-      relations: ['items', 'items.product'],
-      order: { createdAt: 'DESC' },
-      skip,
-      take: limit,
-    });
+    const [orders, total] = await this.orderRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.items', 'items')
+      .leftJoinAndSelect('items.product', 'product')
+      .orderBy('order.createdAt', 'DESC')
+      .skip(skip)
+      .take(limit)
+      .getManyAndCount();
 
     return {
       data: orders,
       total,
     };
   }
+
   async getMyOrders(userId: number) {
-    return this.orderRepository.find({
-      where: { userId },
-      relations: ['items', 'items.product'],
-      order: { createdAt: 'DESC' },
-    });
+    return this.orderRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.items', 'items')
+      .leftJoinAndSelect('items.product', 'product')
+      .where('order.userId = :userId', { userId })
+      .orderBy('order.createdAt', 'DESC')
+      .getMany();
   }
 
   async getOrder(userId: number, orderId: number) {
-    const order = await this.orderRepository.findOne({
-      where: { id: orderId, userId },
-      relations: ['items', 'items.product'],
-    });
+    const order = await this.orderRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.items', 'items')
+      .leftJoinAndSelect('items.product', 'product')
+      .where('order.id = :orderId', { orderId })
+      .andWhere('order.userId = :userId', { userId })
+      .getOne();
 
     if (!order) {
       throw new NotFoundException('Order Not Found');
