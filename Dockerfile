@@ -34,4 +34,6 @@ USER node
 
 EXPOSE 8000
 
-CMD ["npm", "run", "start:prod"]
+# Run node directly (not via npm) so Docker's SIGTERM reaches PID 1
+# and the cluster primary can gracefully shut down all workers
+CMD ["node", "dist/main"]
