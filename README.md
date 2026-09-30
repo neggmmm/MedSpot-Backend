@@ -4,6 +4,18 @@ A comprehensive e-commerce backend built with NestJS, featuring product manageme
 
 **Live API:** `http://13.53.40.13:8000/`
 
+## Local setup
+
+Create the local environment file before starting the API:
+
+```bash
+cp .env.example .env
+```
+
+Then replace the `change-me` values, ensure PostgreSQL and Redis are running,
+and start the server with `npm run start:dev`. For Docker Compose, copy
+`.env.docker.example` instead; it uses the Docker service hostnames.
+
 ## 🚀 Deployment
 
 - **Server:** AWS EC2
@@ -486,4 +498,3 @@ Product images are uploaded to **AWS S3** and stored with the following structur
 For API issues or bugs, please contact the development team.
 
 **API Base URL:** `http://13.53.40.13:8000/`
-

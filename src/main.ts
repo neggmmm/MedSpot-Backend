@@ -9,7 +9,9 @@ import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
 import cluster from 'cluster';
 import * as os from 'os';
 
-const NUM_WORKERS = os.cpus().length; // 12 on your Ryzen 5 2600
+// A cluster is useful in production, but makes local configuration failures
+// appear once per CPU and obscures the original error with EPIPE messages.
+const NUM_WORKERS = process.env.NODE_ENV === 'production' ? os.cpus().length : 1;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -32,7 +34,7 @@ async function bootstrap() {
 
 // ─── Cluster entry point ─────────────────────────────────────────────────────
 
-if (cluster.isPrimary) {
+if (cluster.isPrimary && NUM_WORKERS > 1) {
   console.log(`[Cluster] Primary ${process.pid} — spawning ${NUM_WORKERS} workers`);
 
   // Fork one worker per logical CPU core

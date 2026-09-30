@@ -39,11 +39,12 @@ export const validationSchema = Joi.object({
   PAYMOB_API_KEY: Joi.string().required(),
   PAYMOB_INTEGRATION_ID: Joi.alternatives(Joi.string(), Joi.number()).required(),
   PAYMOB_IFRAME_ID: Joi.alternatives(Joi.string(), Joi.number()).required(),
-  PAYMOB_HMAC_SECRET: Joi.string().optional(),
+  // Optional dotenv values are commonly present as KEY=; accept that as unset.
+  PAYMOB_HMAC_SECRET: Joi.string().allow('').optional(),
   MAIL_HOST: Joi.string().required(),
   MAIL_PORT: Joi.number().required(),
   MAIL_SECURE: Joi.boolean().required(),
   MAIL_USER: Joi.string().required(),
   MAIL_PASS: Joi.string().required(),
-  MAIL_FROM: Joi.string().optional(),
+  MAIL_FROM: Joi.string().allow('').optional(),
 });
